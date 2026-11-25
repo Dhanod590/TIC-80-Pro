@@ -1,0 +1,29 @@
+name: Build TIC-80 PRO (Windows)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-windows-pro:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Configure CMake (PRO + Player)
+        run: cmake -B build -DBUILD_PRO=On -DBUILD_PLAYER=On -DBUILD_SDLGPU=On
+
+      - name: Build Release Binaries
+        run: cmake --build build --config Release --parallel
+
+      - name: Upload Windows PRO Zip
+        uses: actions/upload-artifact@v4
+        with:
+          name: tic80-pro-windows
+          path: |
+            build/bin/Release/tic80.exe
+            build/bin/Release/player-sdl.exe
+            build/bin/Release/*.dll
